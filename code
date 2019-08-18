@@ -1,0 +1,99 @@
+#include <iostream> 
+#include <vector> 
+
+using namespace std; 
+
+struct Node 
+{ 
+  int key; 
+  struct Node *left, *right, *center; 
+}; 
+
+Node * newNode(int k) 
+{ 
+  Node *temp = new Node; 
+  temp->key = k; 
+  temp->left = temp->right = temp->center = NULL; 
+  return temp; 
+} 
+
+bool findPath(Node* root, int n, vector<Node *> &path){
+  
+  if(root==NULL)
+    return false;
+  
+   path.push_back(root);
+
+  if(root->key == n){
+    return true;
+  }
+  
+  else{  
+    
+    if(findPath(root->left, n, path) ||  findPath(root->right,n,path) || findPath(root->center,n,path))    
+       return true;
+
+     else{
+      path.pop_back();
+      return false;
+     }
+      
+  }
+
+}
+
+
+int findNumberOfNodesBetweenThem(Node* root, int n1, int n2){
+  
+  vector<Node *> path1,path2;
+  
+  if(root==NULL)
+    return -1;
+  
+  bool b1=findPath(root, n1, path1);
+  bool b2=findPath(root, n2, path2);
+
+  if(b1 && b2){
+
+  
+    int i;
+    int size= min(path2.size(), path1.size());
+    
+    for(i=0; i<size; i++){
+      
+      if(path1[i] != path2[i])
+        break;
+    
+    }
+
+    if(i==size)
+    return max(path1.size(),path2.size()) -i;      
+      
+    return (size-1) + ( max(path1.size(),path2.size()) -i);    
+    
+  }
+  
+  return -1;
+  
+}
+
+int main() 
+{ 
+  Node * root = newNode(1); 
+  root->left = newNode(2); 
+  root->right = newNode(4); 
+  root->center = newNode(3); 
+  root->left->right = newNode(7); 
+  root->left->left = newNode(6);
+  root->center->right = newNode(10); 
+  root->center->left = newNode(9); 
+  root->center->left->left = newNode(14); 
+  root->center->left->right = newNode(16); 
+  root->right->left = newNode(11); 
+  root->right->right = newNode(13); 
+  root->right->center = newNode(12); 
+
+  cout<<findNumberOfNodesBetweenThem(root, 9, 16); 
+
+  return 0; 
+} 
